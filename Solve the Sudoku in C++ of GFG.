@@ -1,0 +1,134 @@
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+// UNASSIGNED is used for empty cells in sudoku grid 
+#define UNASSIGNED 0  
+
+// N is used for the size of Sudoku grid.  
+// Size will be NxN  
+#define N 9  
+
+
+// } Driver Code Ends
+class Solution 
+{
+ 
+public:
+    //Function to find a solved Sudoku. 
+    bool SolveSudoku(int grid[N][N])  
+    { 
+        int row, col;
+        if (!findEmptyCell(grid, row, col))
+            return true; // All cells are filled, Sudoku is solved.
+
+        for (int num = 1; num <= 9; num++)
+        {
+            if (isSafe(grid, row, col, num))
+            {
+                grid[row][col] = num;
+                if (SolveSudoku(grid))
+                    return true;
+                grid[row][col] = 0; // Backtrack if the current number doesn't lead to a solution.
+            }
+        }
+        
+        return false; // No solution found.
+    }
+    
+    // Helper function to find an empty cell in the Sudoku grid.
+    bool findEmptyCell(int grid[N][N], int& row, int& col)
+    {
+        for (row = 0; row < N; row++)
+        {
+            for (col = 0; col < N; col++)
+            {
+                if (grid[row][col] == 0)
+                    return true; // Found an empty cell.
+            }
+        }
+        return false; // All cells are filled.
+    }
+    
+    // Helper function to check if it is safe to place the number in the cell.
+    bool isSafe(int grid[N][N], int row, int col, int num)
+    {
+        return !usedInRow(grid, row, num) &&
+               !usedInCol(grid, col, num) &&
+               !usedInBox(grid, row - row % 3, col - col % 3, num);
+    }
+
+    // Helper function to check if the number is used in the current row.
+    bool usedInRow(int grid[N][N], int row, int num)
+    {
+        for (int i = 0; i < N; i++)
+        {
+            if (grid[row][i] == num)
+                return true;
+        }
+        return false;
+    }
+
+    // Helper function to check if the number is used in the current column.
+    bool usedInCol(int grid[N][N], int col, int num)
+    {
+        for (int i = 0; i < N; i++)
+        {
+            if (grid[i][col] == num)
+                return true;
+        }
+        return false;
+    }
+
+    // Helper function to check if the number is used in the 3x3 sub-box.
+    bool usedInBox(int grid[N][N], int boxStartRow, int boxStartCol, int num)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (grid[i + boxStartRow][j + boxStartCol] == num)
+                    return true;
+            }
+        }
+        return false;
+    }
+    
+    //Function to print grids of the Sudoku.
+    void printGrid(int grid[N][N]) 
+    {
+        for (int i = 0; i < N; i++)
+        {
+            for (int j = 0; j < N; j++)
+            {
+                cout << grid[i][j] << " ";
+            }
+        }
+    }
+};
+
+//{ Driver Code Starts.
+
+int main() {
+	int t;
+	cin>>t;
+	while(t--)
+	{
+		int grid[N][N];
+		
+		for(int i=0;i<9;i++)
+		    for(int j=0;j<9;j++)
+		        cin>>grid[i][j];
+		        
+		Solution ob;
+		
+		if (ob.SolveSudoku(grid) == true)  
+            ob.printGrid(grid);  
+        else
+            cout << "No solution exists";  
+        
+        cout<<endl;
+	}
+	
+	return 0;
+}
+// } Driver Code Ends
